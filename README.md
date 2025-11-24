@@ -1,5 +1,5 @@
 # RNA-Design-LM
-LLM-RNA-Design is a research codebase for designing RNA sequences with autoregressive language models. Instead of solving each RNA inverse-folding instance from scratch with combinatorial search, we train a conditional LM to map target secondary structures (dot–bracket strings) directly to RNA sequences, combining supervised learning on solver-generated structure–sequence pairs with reinforcement learning that optimizes thermodynamic folding metrics such as Boltzmann probability, ensemble defect, and MFE uniqueness. Constrained decoding enforces base-pairing rules during generation so that all sampled sequences are structurally valid by construction, enabling fast, amortized RNA design at scale.
+RNA-Design-LM is a research codebase for designing RNA sequences with autoregressive language models. Instead of solving each RNA inverse-folding instance from scratch with combinatorial search, we train a conditional LM to map target secondary structures (dot–bracket strings) directly to RNA sequences, combining supervised learning on solver-generated structure–sequence pairs with reinforcement learning that optimizes thermodynamic folding metrics such as Boltzmann probability, ensemble defect, and MFE uniqueness. Constrained decoding enforces base-pairing rules during generation so that all sampled sequences are structurally valid by construction, enabling fast, amortized RNA design at scale.
 
 ## Note: All the training data and model for Supervised Learning and RL is in huggingface hub see: [https://huggingface.co/Milanmg/LLM-RNA-Design-2025/tree/main]
 
@@ -130,4 +130,4 @@ python plot_best_of_n.py \
   --log-base 10 \
   --cache_path ./cache/eval_cache.parquet
 ```
-
+<img src="figs/best_of_N_probability.png" width="800">
