@@ -4,7 +4,8 @@ RNA-Design-LM is a research codebase for designing RNA sequences with autoregres
 ## Note: All the training data and model for Supervised Learning and RL is in huggingface hub see: [https://huggingface.co/Milanmg/LLM-RNA-Design-2025/tree/main]
 
 ## 1. Dependency
-pip3 install -r requirements.txt
+python3 \
+pip install requirements.txt
 
 ## 2. Constrained Decoding
 This script runs batched inference with an RNA LM on a JSONL test set of target structures, optionally using C++-accelerated constrained decoding (via prefix_allowed_tokens_fn) to enforce Watson–Crick–wobble pairing. It also supports resuming from an existing output file so you don’t waste samples on IDs that are already complete.
@@ -54,7 +55,7 @@ The script logs how many IDs are fully done, partially done, and not started, th
 #### Example: SL+RL model with constrained decoding
 ```python
 python ./scripts/constrained_decoding.py \
-  --test_path ./test/eterna100.jsonl \
+  --test_path ../test/eterna100.jsonl \
   --model_flavor slrl \
   --n_repeats 1000 \
   --batch_size 1024 \
