@@ -16,3 +16,76 @@ Optionally enforces base-pair constraints during decoding:
 Unpaired / opening ( → any of {A,C,G,U} Closing ) → only nucleotides compatible with its partner (CG, GC, AU, UA, GU, UG)
 
 Writes a JSONL output file with:id, target_structure, designed_sequence (A/C/G/U string) and time (average seconds per sample in that batch)
+
+
+### Key arguments
+
+#### I/O & model selection
+
+--test_path
+Path to test JSONL (default: ../test/eterna100.jsonl).
+Each line should be a JSON dict with id and target_structure.
+
+--output_path
+Where to write generated designs (JSONL).
+If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl
+
+--model_flavor {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default)
+
+--sl_model_path
+Default HF path for the SL model
+(default: Milanmg/LLM-RNA-Design-2025/model/SL)
+
+--slrl_model_path
+Default HF path for the SL+RL model
+(default: Milanmg/LLM-RNA-Design-2025/model/SL+RL)
+
+--model_path
+Optional explicit override.
+If it looks like Milanmg/LLM-RNA-Design-2025/model/SL+RL, the script splits it into:
+
+repo_id = Milanmg/LLM-RNA-Design-2025
+
+subfolder = model/SL+RL
+This overrides --model_flavor, --sl_model_path, and --slrl_model_path.
+
+Sampling / decoding
+
+--n_repeats
+Number of samples to generate per id (default: 1000).
+
+--batch_size
+Number of structures per generation batch (default: 1024).
+
+--do_sample
+If set, use sampling; otherwise defaults to greedy-like decoding.
+
+--temp
+Sampling temperature (default: 2.0).
+
+--top_p
+Nucleus-sampling top_p (default: 1.0 = no truncation).
+
+--max_decode_tokens
+Maximum number of new tokens to generate (default: 512).
+
+Constrained decoding & ID subset
+
+--constrained_decode
+If set, enables structure-aware constrained decoding that enforces base-pair rules.
+
+--constrained_id
+Optional list of integer IDs.
+If provided, only those IDs are decoded (others are skipped).
+
+Resume behavior
+
+--resume_remaining / --no-resume_remaining
+
+Default: --resume_remaining (True)
+
+True: read output_path, count existing samples per id, and only generate the remaining repeats.
+
+False: ignore any existing output and start from scratch (file opened in w mode).
+
+The script logs how many IDs are fully done, partially done, and not started, then processes the remaining “tasks” in batches.
