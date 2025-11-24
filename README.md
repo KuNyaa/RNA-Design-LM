@@ -130,5 +130,4 @@ python plot_best_of_n.py \
   --log-base 10 \
   --cache_path ./cache/eval_cache.parquet
 ```
-Will get a BoN plot like this:
-<img src="figs/" width="800">
+<img src="figs/best_of_N_probability.png" width="800">
