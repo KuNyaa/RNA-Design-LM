@@ -53,14 +53,38 @@ The script logs how many IDs are fully done, partially done, and not started, th
 #### Example: SL+RL model with constrained decoding
 ```python
 python constrained_decoding.py \
-  --test_path ./test/eterna100.jsonl \
+  --test_path ../test/eterna100.jsonl \
   --model_flavor slrl \
   --n_repeats 1000 \
-  --batch_size 512 \
+  --batch_size 1024 \
   --do_sample \
   --temp 2 \
   --constrained_decode 
 ```
+Should see something like this:
+```
+python constrained_decoding.py   --test_path ../test/eterna100.jsonl   --model_flavor slrl   --n_repeats 1000   --
+batch_size 1024   --do_sample   --temp 2   --constrained_decode 
+13:18:26 INFO Using model_flavor=slrl, model_path=Milanmg/LLM-RNA-Design-2025/model/SL+RL
+13:18:26 INFO Resolved repo_id='Milanmg/LLM-RNA-Design-2025', subfolder='model/SL+RL'
+13:18:26 INFO No --output_path provided. Using derived path from test_path: ../eterna100_decoding_results.jsonl
+13:18:26 INFO Loading model & tokenizer from repo_id='Milanmg/LLM-RNA-Design-2025', subfolder='model/SL+RL'
+13:18:28 INFO We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+13:18:29 INFO Loaded 100 test records from ../test/eterna100.jsonl
+13:18:29 INFO Resume enabled: found 0 existing samples across 0 unique ids in ../eterna100_decoding_results.jsonl
+13:18:29 INFO ID sampling status: considered=100, completed=0, partial=0, not_started=100, remaining_tasks=100000
+13:18:29 INFO Not-started examples (preview): 8, 1, 23, 26, 15, 30, 88, 41, 3, 11, 57, 66, 40, 65, 20, 10, 33, 47, 62, 27
+13:18:29 INFO 100000 tasks in 98 batches
+13:18:30 INFO Batch 1/98: size=1024, prefix_len=19
+13:18:31 INFO   Constrained generate() took 1.38s
+13:18:31 INFO Batch 2/98: size=1024, prefix_len=20
+13:18:32 INFO   Constrained generate() took 0.93s
+13:18:32 INFO Batch 3/98: size=1024, prefix_len=29
+13:18:33 INFO   Constrained generate() took 1.40s
+13:18:33 INFO Batch 4/98: size=1024, prefix_len=33
+13:18:35 INFO   Constrained generate() took 1.67s
+```
+
 #### Example: SL model + fresh run
 ```python
 python constrained_decoding.py \
@@ -73,7 +97,6 @@ python constrained_decoding.py \
   --no-resume_remaining \
   --output_path ./results/sl_rnasolo100_decoding.jsonl
 ```
-
 ## 2. Best-of-N evaluation & plotting (plot BON script)
 This script takes one or more JSONL result files (e.g., outputs from constrained_decoding.py or other solvers), evaluates each designed sequence with a thermodynamic oracle (eval_design), caches the metrics, and then produces Best-of-N curves comparing experiments to a strong SOTA baseline (e.g., SAMFEO).
 
