@@ -446,7 +446,7 @@ def main():
     parser.add_argument(
         '--sota',
         type=str,
-        default=[],
+        default="../sota_decoding_results/eterna100_SAMFEO.jsonl",
         help="Path to SOTA JSONL")
     parser.add_argument(
         '--out_dir',

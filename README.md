@@ -106,7 +106,7 @@ This script takes one or more JSONL result files (e.g., outputs from constrained
                  Example: --results ./results/sl.jsonl ./results/slrl.jsonl \
 ``--exp_names``: List of human-readable names (same length as --results) used in the plot legends.
                  Example: --exp_names SL SL+RL \
-``--sota``:      Path to the SOTA JSONL file (e.g., SAMFEO outputs). Must contain compatible fields (id, target_structure, designed_sequence, etc.). \
+``--sota``:      Path to the SOTA JSONL file (e.g., SAMFEO outputs). Must contain compatible fields (id, target_structure, designed_sequence, etc.). (default: ../sota_decoding_results/eterna100_SAMFEO.jsonl)\
 ``--out_dir``: Directory where plots will be saved (default: ../plots_bon/). \
 ``--max_n``: Maximum N for Best-of-N curves (default: 1000). Actual max may be limited by the smallest number of runs per ID. \
 ``--max_turns``: Max turns to plot for other analyses (currently not reached because the script exits after Best-of-N plots). \
