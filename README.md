@@ -30,57 +30,42 @@ Each line should be a JSON dict with id and target_structure.
 Where to write generated designs (JSONL).
 If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl
 
---model_flavor {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default)
+--model_flavor: {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default)
 
---sl_model_path
+--sl_model_path:
 Default HF path for the SL model
 (default: Milanmg/LLM-RNA-Design-2025/model/SL)
 
---slrl_model_path
+--slrl_model_path:
 Default HF path for the SL+RL model
 (default: Milanmg/LLM-RNA-Design-2025/model/SL+RL)
 
---model_path
-Optional explicit override.
-If it looks like Milanmg/LLM-RNA-Design-2025/model/SL+RL, the script splits it into:
 
-repo_id = Milanmg/LLM-RNA-Design-2025
+#### Sampling / decoding
 
-subfolder = model/SL+RL
-This overrides --model_flavor, --sl_model_path, and --slrl_model_path.
+--n_repeats: Number of samples to generate per id (default: 1000).
 
-Sampling / decoding
+--batch_size: Number of structures per generation batch (default: 1024).
 
---n_repeats
-Number of samples to generate per id (default: 1000).
+--do_sample: If set, use sampling; otherwise defaults to greedy-like decoding.
 
---batch_size
-Number of structures per generation batch (default: 1024).
+--temp: Sampling temperature (default: 2.0).
 
---do_sample
-If set, use sampling; otherwise defaults to greedy-like decoding.
+--top_p: Nucleus-sampling top_p (default: 1.0 = no truncation).
 
---temp
-Sampling temperature (default: 2.0).
+--max_decode_tokens: Maximum number of new tokens to generate (default: 512).
 
---top_p
-Nucleus-sampling top_p (default: 1.0 = no truncation).
+#### Constrained decoding & ID subset
 
---max_decode_tokens
-Maximum number of new tokens to generate (default: 512).
+--constrained_decode: If set, enables structure-aware constrained decoding that enforces base-pair rules.
 
-Constrained decoding & ID subset
-
---constrained_decode
-If set, enables structure-aware constrained decoding that enforces base-pair rules.
-
---constrained_id
+--constrained_id: 
 Optional list of integer IDs.
 If provided, only those IDs are decoded (others are skipped).
 
-Resume behavior
+#### Resume behavior
 
---resume_remaining / --no-resume_remaining
+--resume_remaining / --no-resume_remaining:
 
 Default: --resume_remaining (True)
 
