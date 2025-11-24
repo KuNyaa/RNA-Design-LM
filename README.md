@@ -27,6 +27,7 @@ Path to test JSONL (default: ../test/eterna100.jsonl).
 Each line should be a JSON dict with id and target_structure.
 
 --output_path
+
 Where to write generated designs (JSONL).
 If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl
 
