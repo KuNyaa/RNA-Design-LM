@@ -14,64 +14,95 @@ Unpaired / opening ( → any of {A,C,G,U} Closing ) → only nucleotides compati
 ### Key arguments
 
 #### I/O & model selection
-
---test_path:
+``--test_path``:
 Path to test JSONL (default: ../test/eterna100.jsonl).
-Each line should be a JSON dict with id and target_structure.
-
---output_path:
+Each line should be a JSON dict with id and target_structure. \
+``--output_path``:
 Where to write generated designs (JSONL).
-If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl
-
---model_flavor: {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default)
-
---sl_model_path:
+If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl \
+``--model_flavor``: {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default) \
+``--sl_model_path``:
 Default HF path for the SL model
-(default: Milanmg/LLM-RNA-Design-2025/model/SL)
-
---slrl_model_path:
+(default: Milanmg/LLM-RNA-Design-2025/model/SL) \
+``--slrl_model_path``:
 Default HF path for the SL+RL model
-(default: Milanmg/LLM-RNA-Design-2025/model/SL+RL)
+(default: Milanmg/LLM-RNA-Design-2025/model/SL+RL) 
 
 
-#### Sampling / decoding
-
---n_repeats: Number of samples to generate per id (default: 1000).
-
---batch_size: Number of structures per generation batch (default: 1024).
-
---do_sample: If set, use sampling; otherwise defaults to greedy-like decoding.
-
---temp: Sampling temperature (default: 2.0).
-
---top_p: Nucleus-sampling top_p (default: 1.0 = no truncation).
-
---max_decode_tokens: Maximum number of new tokens to generate (default: 512).
+#### Sampling / decoding 
+``--n_repeats``: Number of samples to generate per id (default: 1000).\
+``--batch_size``: Number of structures per generation batch (default: 1024).\
+``--do_sample``: If set, use sampling; otherwise defaults to greedy-like decoding.\
+``--temp``: Sampling temperature (default: 2.0).\
+``--top_p``: Nucleus-sampling top_p (default: 1.0 = no truncation).\
+``--max_decode_tokens``: Maximum number of new tokens to generate (default: 512).
 
 #### Constrained decoding & ID subset
-
---constrained_decode: If set, enables structure-aware constrained decoding that enforces base-pair rules.
-
---constrained_id: 
-Optional list of integer IDs.
-If provided, only those IDs are decoded (others are skipped).
+``--constrained_decode``: If set, enables structure-aware constrained decoding that enforces base-pair rules. \
+``--constrained_id``: Optional list of integer IDs. If provided, only those IDs are decoded (others are skipped).
 
 #### Resume behavior
-
---resume_remaining / --no-resume_remaining:\
+``--resume_remaining / --no-resume_remaining``:\
 Default: --resume_remaining (True)\
 True: read output_path, count existing samples per id, and only generate the remaining repeats.\
 False: ignore any existing output and start from scratch (file opened in w mode).\
 The script logs how many IDs are fully done, partially done, and not started, then processes the remaining “tasks” in batches.
 
 #### Example: SL+RL model with constrained decoding
+```python
 python constrained_decoding.py \
-  --test_path ./data/eterna100.jsonl \
+  --test_path ./test/eterna100.jsonl \
   --model_flavor slrl \
   --n_repeats 1000 \
   --batch_size 512 \
   --do_sample \
-  --temp 1.5 \
-  --top_p 0.95 \
-  --constrained_decode
+  --temp 2 \
+  --constrained_decode 
+```
+#### Example: SL model + fresh run
+```python
+python constrained_decoding.py \
+  --test_path ./data/rnasolo100.jsonl \
+  --model_flavor slrl \
+  --n_repeats 500 \
+  --batch_size 256 \
+  --do_sample 
+  --constrained_decode \
+  --no-resume_remaining \
+  --output_path ./results/sl_rnasolo100_decoding.jsonl
+```
+
+## 2. Best-of-N evaluation & plotting (plot BON script)
+This script takes one or more JSONL result files (e.g., outputs from constrained_decoding.py or other solvers), evaluates each designed sequence with a thermodynamic oracle (eval_design), caches the metrics, and then produces Best-of-N curves comparing experiments to a strong SOTA baseline (e.g., SAMFEO).
+
+### Key arguments
+
+``--results``:   List of JSONL result files, one per experiment. \
+                 Example: --results ./results/sl.jsonl ./results/slrl.jsonl \
+``--exp_names``: List of human-readable names (same length as --results) used in the plot legends.
+                 Example: --exp_names SL SL+RL \
+``--sota``:      Path to the SOTA JSONL file (e.g., SAMFEO outputs). Must contain compatible fields (id, target_structure, designed_sequence, etc.). \
+``--out_dir``: Directory where plots will be saved (default: ../plots_bon/). \
+``--max_n``: Maximum N for Best-of-N curves (default: 1000). Actual max may be limited by the smallest number of runs per ID. \
+``--max_turns``: Max turns to plot for other analyses (currently not reached because the script exits after Best-of-N plots). \
+``--n_workers``: Number of processes used for parallel evaluation (default: 50). Set this based on CPU cores and memory. \
+``--log-base {2, 10}``: If set, x-axis for Best-of-N is logarithmic with that base (e.g., 2 or 10). If omitted, plots use a linear x-axis. \
+``--cache_path``: Path to a Parquet cache storing previous eval_design results (default: ./eval_cache_sept.parquet).If file exists, it is loaded and reused. If not, it is created. Speeds up repeated evaluations across runs/experiments.
+
+### Example: compare SL vs SL+RL vs SAMFEO on Eterna100
+```
+python plot_best_of_n.py \
+  --results \
+    ./results/sl_eterna100_decoding.jsonl \
+    ./results/slrl_eterna100_decoding.jsonl \
+  --exp_names \
+    SL \
+    SL+RL \
+  --sota ./results/SAMFEO_eterna100.jsonl \
+  --out_dir ./plots/bon_eterna100 \
+  --max_n 1000 \
+  --n_workers 32 \
+  --log-base 10 \
+  --cache_path ./cache/eval_cache.parquet
+```
 
