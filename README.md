@@ -119,7 +119,7 @@ This script takes one or more JSONL result files (e.g., outputs from constrained
 
 ### Example: compare SL vs SL+RL vs SAMFEO on Eterna100
 ```
-python plot_best_of_n.py \
+python scripts/plot_bon.py \
   --results \
     ./decoding_results/eterna100_sl.jsonl \
     ./decoding_results/eterna100_slrl.jsonl \
@@ -127,7 +127,7 @@ python plot_best_of_n.py \
     SL \
     SL+RL \
   --sota ./decoding_results/eterna100_SAMFEO.jsonl \
-  --out_dir ./plots/Eterna_bo100 \
+  --out_dir ./plot_bon/Eterna_bo100 \
   --max_n 1000 \
   --n_workers 32 \
   --log-base 10 \

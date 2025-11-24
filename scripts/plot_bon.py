@@ -450,7 +450,7 @@ def main():
         help="Path to SOTA JSONL")
     parser.add_argument(
         '--out_dir',
-        default='./plots_bon/',
+        default='./plot_bon/',
         help="Directory to save plots")
     parser.add_argument(
         '--max_n',
