@@ -60,10 +60,7 @@ If provided, only those IDs are decoded (others are skipped).
 
 --resume_remaining / --no-resume_remaining:
 
-Default: --resume_remaining (True)
-
-True: read output_path, count existing samples per id, and only generate the remaining repeats.
-
-False: ignore any existing output and start from scratch (file opened in w mode).
-
+Default: --resume_remaining (True)\
+True: read output_path, count existing samples per id, and only generate the remaining repeats.\
+False: ignore any existing output and start from scratch (file opened in w mode).\
 The script logs how many IDs are fully done, partially done, and not started, then processes the remaining “tasks” in batches.
