@@ -63,3 +63,15 @@ Default: --resume_remaining (True)\
 True: read output_path, count existing samples per id, and only generate the remaining repeats.\
 False: ignore any existing output and start from scratch (file opened in w mode).\
 The script logs how many IDs are fully done, partially done, and not started, then processes the remaining “tasks” in batches.
+
+#### Example: SL+RL model with constrained decoding
+python constrained_decoding.py \
+  --test_path ./data/eterna100.jsonl \
+  --model_flavor slrl \
+  --n_repeats 1000 \
+  --batch_size 512 \
+  --do_sample \
+  --temp 1.5 \
+  --top_p 0.95 \
+  --constrained_decode
+
