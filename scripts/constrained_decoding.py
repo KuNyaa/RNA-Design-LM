@@ -49,14 +49,14 @@ def parse_args():
         "--test_path",
         type=str,
         # default="/nfs/stak/users/gautammi/my-hpc-share/workspace/research/research/RNADesign/results/RNAsolo_SAMFEO.jsonl"
-        default="../test/eterna100.jsonl",
+        default="./test/eterna100.jsonl",
         help="Path to test data JSONL file.",
     )
 
     parser.add_argument(
         "--output_path",
         type=str,
-        default="",
+        default="./decoding_results/eterna100_slrl.jsonl",
         help="Where to write the generated designs (JSONL). "
              "If empty, a default will be derived from --test_path.",
     )

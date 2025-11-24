@@ -446,11 +446,11 @@ def main():
     parser.add_argument(
         '--sota',
         type=str,
-        default="../sota_decoding_results/eterna100_SAMFEO.jsonl",
+        default="./decoding_results/eterna100_SAMFEO.jsonl",
         help="Path to SOTA JSONL")
     parser.add_argument(
         '--out_dir',
-        default='../plots_bon/',
+        default='./plots_bon/',
         help="Directory to save plots")
     parser.add_argument(
         '--max_n',
