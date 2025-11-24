@@ -270,7 +270,9 @@ def main():
             ext = ".jsonl"
         default_name = f"{stem}_decoding_results{ext}"
         # keep it next to the test file by default
-        output_path = os.path.join(test_dir or ".", default_name)
+        # output_path = os.path.join(test_dir or ".", default_name)
+        output_path = f"../{default_name}"
+
         logger.info(
             f"No --output_path provided. Using derived path from test_path: {output_path}"
         )
