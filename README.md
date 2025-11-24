@@ -23,7 +23,8 @@ Path to test JSONL (default: ./test/eterna100.jsonl).
 Each line should be a JSON dict with id and target_structure. \
 ``--output_path``:
 Where to write generated designs (JSONL).
-If empty, a default is derived from test_path, e.g. ./test/eterna100.jsonl → ./eterna100_decoding_results.jsonl \
+If empty, a default is derived as
+./decoding_results/{test_file_stem}_{model_flavor}.jsonl. For example: --test_path ./test/eterna100.jsonl --model_flavor slrl → ./decoding_results/eterna100_slrl.jsonl \
 ``--model_flavor``: {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default) \
 ``--sl_model_path``:
 Default HF path for the SL model
@@ -55,9 +56,9 @@ The script logs how many IDs are fully done, partially done, and not started, th
 #### Example: SL+RL model with constrained decoding
 ```python
 python ./scripts/constrained_decoding.py \
-  --test_path ../test/eterna100.jsonl \
+  --test_path ./test/eterna100.jsonl \
   --model_flavor slrl \
-  --n_repeats 1000 \
+  --n_repeats 100 \
   --batch_size 1024 \
   --do_sample \
   --temp 2 \
@@ -91,9 +92,10 @@ batch_size 1024   --do_sample   --temp 2   --constrained_decode
 ```python
 python ./scripts/constrained_decoding.py \
   --test_path ./test/eterna100.jsonl \
-  --model_flavor slrl \
-  --n_repeats 500 \
-  --batch_size 256 \
+  --model_flavor sl \
+  --n_repeats 100 \
+  --batch_size 1024 \
+  --temp 2 \
   --do_sample 
   --constrained_decode \
   --no-resume_remaining \
@@ -104,11 +106,11 @@ This script takes one or more JSONL result files (e.g., outputs from constrained
 ### Key arguments
 
 ``--results``:   List of JSONL result files, one per experiment. \
-                 Example: --results ./results/sl.jsonl ./results/slrl.jsonl \
+                 Example: --results ./decoding_results/eterna100_sl.jsonl ./decoding_results/eterna100_slrl.jsonl \
 ``--exp_names``: List of human-readable names (same length as --results) used in the plot legends.
                  Example: --exp_names SL SL+RL \
-``--sota``:      Path to the SOTA JSONL file (e.g., SAMFEO outputs). Must contain compatible fields (id, target_structure, designed_sequence, etc.). (default: ../sota_decoding_results/eterna100_SAMFEO.jsonl)\
-``--out_dir``: Directory where plots will be saved (default: ../plots_bon/). \
+``--sota``:      Path to the SOTA JSONL file (e.g., SAMFEO outputs). Must contain compatible fields (id, target_structure, designed_sequence, etc.). (default: ./decoding_results/eterna100_SAMFEO.jsonl)\
+``--out_dir``: Directory where plots will be saved (default: ./plots_bon/Eterna_bo100). \
 ``--max_n``: Maximum N for Best-of-N curves (default: 1000). Actual max may be limited by the smallest number of runs per ID. \
 ``--max_turns``: Max turns to plot for other analyses (currently not reached because the script exits after Best-of-N plots). \
 ``--n_workers``: Number of processes used for parallel evaluation (default: 50). Set this based on CPU cores and memory. \
@@ -119,16 +121,16 @@ This script takes one or more JSONL result files (e.g., outputs from constrained
 ```
 python plot_best_of_n.py \
   --results \
-    ./results/sl_eterna100_decoding.jsonl \
-    ./results/slrl_eterna100_decoding.jsonl \
+    ./decoding_results/eterna100_sl.jsonl \
+    ./decoding_results/eterna100_slrl.jsonl \
   --exp_names \
     SL \
     SL+RL \
-  --sota ./results/SAMFEO_eterna100.jsonl \
-  --out_dir ./plots/bon_eterna100 \
+  --sota ./decoding_results/eterna100_SAMFEO.jsonl \
+  --out_dir ./plots/Eterna_bo100 \
   --max_n 1000 \
   --n_workers 32 \
   --log-base 10 \
-  --cache_path ./cache/eval_cache.parquet
+  --cache_path ./eval_cache_sept.parquet
 ```
-<img src="figs/best_of_N_probability.png" width="800">
+<img src="plot_bon/best_of_N_probability.png" width="800">

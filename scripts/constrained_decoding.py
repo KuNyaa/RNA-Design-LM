@@ -9,7 +9,7 @@ Batched inference for RNA LM with optional fast constrained decoding.
   * model_flavor choice: SL vs SL+RL
   * flavor-specific default model paths
   * test_path instead of input_path
-  * if output_path is empty, derive it from test_path (e.g., foo_decoding_results.jsonl)
+  * if output_path is empty, derive it from test_path (e.g., ./decoding_results/foo_slrl.jsonl)
   * support Hugging Face repo subfolders, e.g. Milanmg/LLM-RNA-Design-2025/model/SL+RL
 """
 
@@ -48,7 +48,6 @@ def parse_args():
     parser.add_argument(
         "--test_path",
         type=str,
-        # default="/nfs/stak/users/gautammi/my-hpc-share/workspace/research/research/RNADesign/results/RNAsolo_SAMFEO.jsonl"
         default="./test/eterna100.jsonl",
         help="Path to test data JSONL file.",
     )
@@ -56,9 +55,12 @@ def parse_args():
     parser.add_argument(
         "--output_path",
         type=str,
-        default="./decoding_results/eterna100_slrl.jsonl",
-        help="Where to write the generated designs (JSONL). "
-             "If empty, a default will be derived from --test_path.",
+        default="",
+        help=(
+            "Where to write the generated designs (JSONL). "
+            "If empty, a default will be derived as "
+            "'./decoding_results/{test_file_stem}_{model_flavor}.jsonl'."
+        ),
     )
 
     # --- Model selection: SL vs SL+RL ---
@@ -243,21 +245,17 @@ def main():
     else:
         logger.info(f"Resolved repo_id='{repo_id}', subfolder=(root)")
 
-    # Resolve output path: if empty, derive from test_path
+    # Resolve output path: if empty, derive from test_path and model_flavor
     if not args.output_path:
-        test_dir = os.path.dirname(args.test_path)
         test_base = os.path.basename(args.test_path)
-        stem, ext = os.path.splitext(test_base)
-        # if the test file has no extension, default to .jsonl
-        if not ext:
-            ext = ".jsonl"
-        default_name = f"{stem}_decoding_results{ext}"
-        # keep it next to the test file by default
-        # output_path = os.path.join(test_dir or ".", default_name)
-        output_path = f"../{default_name}"
-
+        stem, _ext = os.path.splitext(test_base)
+        # always use .jsonl for decoding outputs
+        default_dir = "./decoding_results"
+        os.makedirs(default_dir, exist_ok=True)
+        default_name = f"{stem}_{args.model_flavor}.jsonl"
+        output_path = os.path.join(default_dir, default_name)
         logger.info(
-            f"No --output_path provided. Using derived path from test_path: {output_path}"
+            f"No --output_path provided. Using derived path: {output_path}"
         )
     else:
         output_path = args.output_path
