@@ -1,11 +1,10 @@
 # RNA-Design-LM
 RNA-Design-LM is a research codebase for designing RNA sequences with autoregressive language models. Instead of solving each RNA inverse-folding instance from scratch with combinatorial search, we train a conditional LM to map target secondary structures (dot–bracket strings) directly to RNA sequences, combining supervised learning on solver-generated structure–sequence pairs with reinforcement learning that optimizes thermodynamic folding metrics such as Boltzmann probability, ensemble defect, and MFE uniqueness. Constrained decoding enforces base-pairing rules during generation so that all sampled sequences are structurally valid by construction, enabling fast, amortized RNA design at scale.
 
-## Note: All the training data and model for Supervised Learning and RL is in huggingface hub see: [https://huggingface.co/Milanmg/LLM-RNA-Design-2025/tree/main]
+## Note: All the training data and models for Supervised Learning and RL are available on the Hugging Face Hub. See: [https://huggingface.co/Milanmg/LLM-RNA-Design-2025/tree/main]
 
 ## 1. Dependency
-python3 \
-pip install requirements.txt
+pip3 install requirements.txt
 
 ## 2. Constrained Decoding
 This script runs batched inference with an RNA LM on a JSONL test set of target structures, optionally using C++-accelerated constrained decoding (via prefix_allowed_tokens_fn) to enforce Watson–Crick–wobble pairing. It also supports resuming from an existing output file so you don’t waste samples on IDs that are already complete.
@@ -96,9 +95,9 @@ python ./scripts/constrained_decoding.py \
   --n_repeats 100 \
   --batch_size 1024 \
   --temp 2 \
-  --do_sample 
+  --do_sample \
   --constrained_decode \
-  --no-resume_remaining \
+  --no-resume_remaining
 ```
 ## 2. Best-of-N evaluation & plotting (plot BON script)
 This script takes one or more JSONL result files (e.g., outputs from constrained_decoding.py or other solvers), evaluates each designed sequence with a thermodynamic oracle (eval_design), caches the metrics, and then produces Best-of-N curves comparing experiments to a strong SOTA baseline (e.g., SAMFEO).
@@ -133,4 +132,4 @@ python scripts/plot_bon.py \
   --log-base 10 \
   --cache_path ./eval_cache_sept.parquet
 ```
-<img src="plot_bon/best_of_N_probability.png" width="800">
+<img src="plot_bon/Eterna_bo100000/best_of_N_probability.png" width="600">

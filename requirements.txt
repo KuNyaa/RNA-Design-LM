@@ -52,3 +52,4 @@ tzdata==2025.2
 urllib3==2.5.0
 ViennaRNA==2.7.0
 wcwidth==0.2.14
+fastparquet==2024.11.0
