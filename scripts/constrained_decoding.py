@@ -75,26 +75,13 @@ def parse_args():
         "--sl_model_path",
         type=str,
         default="Milanmg/LLM-RNA-Design-2025/model/SL",
-        help="Default model path for SL-only model (used when --model_flavor sl and --model_path is not set).",
+        help="Default model path for SL-only model.",
     )
     parser.add_argument(
         "--slrl_model_path",
         type=str,
         default="Milanmg/LLM-RNA-Design-2025/model/SL+RL",
-        help="Default model path for SL+RL model (used when --model_flavor slrl and --model_path is not set).",
-    )
-
-    # Optional direct override
-    parser.add_argument(
-        "--model_path",
-        type=str,
-        default=None,
-        help=(
-            "Explicit model path to load. If it includes subfolders (e.g. "
-            "'Milanmg/LLM-RNA-Design-2025/model/SL+RL'), it will be split into "
-            "repo_id='Milanmg/LLM-RNA-Design-2025' and subfolder='model/SL+RL'. "
-            "Overrides --model_flavor / --sl_model_path / --slrl_model_path."
-        ),
+        help="Default model path for SL+RL model.",
     )
 
     parser.add_argument("--n_repeats", type=int, default=1000)
@@ -243,15 +230,11 @@ def main():
     logger = logging.getLogger(__name__)
 
     # Resolve which "raw" model path string to use
-    if args.model_path is not None:
-        raw_model_path = args.model_path
-        logger.info(f"Using explicit model_path override: {raw_model_path}")
-    else:
-        if args.model_flavor == "sl":
-            raw_model_path = args.sl_model_path
-        else:  # "slrl"
-            raw_model_path = args.slrl_model_path
-        logger.info(f"Using model_flavor={args.model_flavor}, model_path={raw_model_path}")
+    if args.model_flavor == "sl":
+        raw_model_path = args.sl_model_path
+    else:  # "slrl"
+        raw_model_path = args.slrl_model_path
+    logger.info(f"Using model_flavor={args.model_flavor}, model_path={raw_model_path}")
 
     # Split into repo_id and optional subfolder for Hugging Face Hub
     repo_id, subfolder = split_repo_and_subfolder(raw_model_path)
