@@ -19,11 +19,11 @@ Unpaired / opening ( → any of {A,C,G,U} Closing ) → only nucleotides compati
 
 #### I/O & model selection
 ``--test_path``:
-Path to test JSONL (default: ../test/eterna100.jsonl).
+Path to test JSONL (default: ./test/eterna100.jsonl).
 Each line should be a JSON dict with id and target_structure. \
 ``--output_path``:
 Where to write generated designs (JSONL).
-If empty, a default is derived from test_path, e.g. ../test/eterna100.jsonl → ../eterna100_decoding_results.jsonl \
+If empty, a default is derived from test_path, e.g. ./test/eterna100.jsonl → ./eterna100_decoding_results.jsonl \
 ``--model_flavor``: {sl, slrl} Which trained model flavor to use: sl = supervised-only model, slrl = SL+RL model (default) \
 ``--sl_model_path``:
 Default HF path for the SL model
@@ -54,7 +54,7 @@ The script logs how many IDs are fully done, partially done, and not started, th
 
 #### Example: SL+RL model with constrained decoding
 ```python
-python constrained_decoding.py \
+python ./scripts/constrained_decoding.py \
   --test_path ../test/eterna100.jsonl \
   --model_flavor slrl \
   --n_repeats 1000 \
@@ -65,15 +65,15 @@ python constrained_decoding.py \
 ```
 Should see something like this:
 ```
-python constrained_decoding.py   --test_path ../test/eterna100.jsonl   --model_flavor slrl   --n_repeats 1000   --
+python constrained_decoding.py   --test_path ./test/eterna100.jsonl   --model_flavor slrl   --n_repeats 1000   --
 batch_size 1024   --do_sample   --temp 2   --constrained_decode 
 13:18:26 INFO Using model_flavor=slrl, model_path=Milanmg/LLM-RNA-Design-2025/model/SL+RL
 13:18:26 INFO Resolved repo_id='Milanmg/LLM-RNA-Design-2025', subfolder='model/SL+RL'
-13:18:26 INFO No --output_path provided. Using derived path from test_path: ../eterna100_decoding_results.jsonl
+13:18:26 INFO No --output_path provided. Using derived path from test_path: ./eterna100_decoding_results.jsonl
 13:18:26 INFO Loading model & tokenizer from repo_id='Milanmg/LLM-RNA-Design-2025', subfolder='model/SL+RL'
 13:18:28 INFO We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
-13:18:29 INFO Loaded 100 test records from ../test/eterna100.jsonl
-13:18:29 INFO Resume enabled: found 0 existing samples across 0 unique ids in ../eterna100_decoding_results.jsonl
+13:18:29 INFO Loaded 100 test records from ./test/eterna100.jsonl
+13:18:29 INFO Resume enabled: found 0 existing samples across 0 unique ids in ./eterna100_decoding_results.jsonl
 13:18:29 INFO ID sampling status: considered=100, completed=0, partial=0, not_started=100, remaining_tasks=100000
 13:18:29 INFO Not-started examples (preview): 8, 1, 23, 26, 15, 30, 88, 41, 3, 11, 57, 66, 40, 65, 20, 10, 33, 47, 62, 27
 13:18:29 INFO 100000 tasks in 98 batches
@@ -89,15 +89,14 @@ batch_size 1024   --do_sample   --temp 2   --constrained_decode
 
 #### Example: SL model + fresh run
 ```python
-python constrained_decoding.py \
-  --test_path ./data/rnasolo100.jsonl \
+python ./scripts/constrained_decoding.py \
+  --test_path ./test/eterna100.jsonl \
   --model_flavor slrl \
   --n_repeats 500 \
   --batch_size 256 \
   --do_sample 
   --constrained_decode \
   --no-resume_remaining \
-  --output_path ./results/sl_rnasolo100_decoding.jsonl
 ```
 ## 2. Best-of-N evaluation & plotting (plot BON script)
 This script takes one or more JSONL result files (e.g., outputs from constrained_decoding.py or other solvers), evaluates each designed sequence with a thermodynamic oracle (eval_design), caches the metrics, and then produces Best-of-N curves comparing experiments to a strong SOTA baseline (e.g., SAMFEO).
