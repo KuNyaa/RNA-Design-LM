@@ -76,18 +76,18 @@ def parse_args():
     parser.add_argument(
         "--sl_model_path",
         type=str,
-        default="Milanmg/LLM-RNA-Design-2025/model/SL",
+        default="Milanmg/LLM-RNA-Design-2026/model/SL",
         help="Default model path for SL-only model.",
     )
     parser.add_argument(
         "--slrl_model_path",
         type=str,
-        default="Milanmg/LLM-RNA-Design-2025/model/SL+RL",
+        default="Milanmg/LLM-RNA-Design-2026/model/SL+RL",
         help="Default model path for SL+RL model.",
     )
 
     parser.add_argument("--n_repeats", type=int, default=1000)
-    parser.add_argument("--batch_size", type=int, default=1024)
+    parser.add_argument("--batch_size", type=int, default=2048)
     parser.add_argument("--do_sample", action="store_true")
     parser.add_argument("--temp", type=float, default=2.0)
     parser.add_argument("--top_p", type=float, default=1.0)
